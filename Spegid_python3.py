@@ -996,6 +996,7 @@ def SPEGID(cur_dir, i, cur_parent_dir, error_log_fp):
 #    print(cur_diffs)
 
 #kneelocator for all data
+#I add this part for cutt k-nearest-neightbour for DBSCAN if number of point are not enought 
     def knee_all(cur_minPts, spe_DF_clean):
         c = cur_minPts-1
         cur_DF = spe_DF_clean.loc[(spe_DF_clean['DM'] > 3) & (spe_DF_clean['DM'] < 70), ].copy()
@@ -1022,7 +1023,7 @@ def SPEGID(cur_dir, i, cur_parent_dir, error_log_fp):
             kneedle = KneeLocator(x = range(1, len(n_dist)+1), y = k_dist, S = 1.0, curve = "concave", direction = "increasing", online = True)
         return  kneedle.knee_y
     r = knee_all(cur_minPts, spe_DF_clean)
-    print(r)
+#    print(r)
     
     for i in range(n_brDMs + 1):
         cur_minPts = 5
@@ -1063,6 +1064,7 @@ def SPEGID(cur_dir, i, cur_parent_dir, error_log_fp):
         # use DM and time index in DBSCAN clustering
             c = cur_minPts-1
 #            print(cur_DF)
+#use KNN algorithm for minum distance between points
             nbrs = NearestNeighbors(n_neighbors = c, n_jobs = 1).fit(cur_DF[['sampling_idx', 'DM_chan_idx']])
             n_dist , n_ind = nbrs.kneighbors(cur_DF[['sampling_idx', 'DM_chan_idx']])
             sort_n_dist = np.sort(n_dist, axis = 0)
@@ -1271,7 +1273,7 @@ def SPEGID(cur_dir, i, cur_parent_dir, error_log_fp):
         if colors[i] == (0.998077662437524, 0.9992310649750096, 0.7460207612456747, 1.0):
             colors[i] = (0,0,0,1)
 #    print(a)
-#dessin
+#visualisation of clustering made by DBSCAN on single pulse file
     for w, col, m in zip(unique_lab, colors, a):        
         if len(all_clusters) == 0:
             print(("no cluster"))
